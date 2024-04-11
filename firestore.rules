@@ -1,0 +1,19 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      // Permite leitura e gravação sem necessidade de autenticação
+      allow read, write;
+    }
+  }
+}
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Permite leitura em qualquer documento em qualquer coleção
+    match /{document=**} {
+      allow read, write;
+    }
+  }
+}
