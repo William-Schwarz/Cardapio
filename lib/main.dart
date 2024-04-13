@@ -26,14 +26,55 @@ void main() async {
   );
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    if (kDebugMode) {
+      print(
+          'Permissão concedida pelo usuário: ${settings.authorizationStatus}');
+    }
+    _startPushNotificationHandler(messaging);
+  } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+    if (kDebugMode) {
+      print(
+          'Permissão concedida previsoriamente pelo usuário: ${settings.authorizationStatus}');
+    }
+    _startPushNotificationHandler(messaging);
+  } else {
+    if (kDebugMode) {
+      print('Permissão negada pelo usuário: ${settings.authorizationStatus}');
+    }
+  }
+
+  runApp(
+    const MyApp(),
+  );
+}
+
+void _startPushNotificationHandler(FirebaseMessaging messaging) async {
   String? token = await messaging.getToken();
   if (kDebugMode) {
     print('TOKEN: $token');
   }
   setPushToken(token);
-  runApp(
-    const MyApp(),
-  );
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Recebi uma mensagem enquanto estava com o App aberto');
+    print('Dados da mensagem: ${message.data}');
+
+    if (message.notification != null) {
+      print(
+          'A mensagem também continha uma notificação: ${message.notification!.title},${message.notification!.body}');
+    }
+  });
 }
 
 void setPushToken(String? token) async {
