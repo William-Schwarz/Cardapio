@@ -13,6 +13,8 @@ import 'package:cardapio/configs/theme/colors.dart';
 import 'package:cardapio/view/navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -66,15 +68,32 @@ void _startPushNotificationHandler(FirebaseMessaging messaging) async {
   }
   setPushToken(token);
 
+  //Firegroud
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Recebi uma mensagem enquanto estava com o App aberto');
-    print('Dados da mensagem: ${message.data}');
+    if (kDebugMode) {
+      print('Recebi uma mensagem enquanto estava com o App aberto');
+    }
+    if (kDebugMode) {
+      print('Dados da mensagem: ${message.data}');
+    }
 
     if (message.notification != null) {
-      print(
-          'A mensagem também continha uma notificação: ${message.notification!.title},${message.notification!.body}');
+      if (kDebugMode) {
+        print(
+            'A mensagem também continha uma notificação: ${message.notification!.title},${message.notification!.body}');
+      }
     }
   });
+
+  //Background
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  //Terminated
+  var notification = await FirebaseMessaging.instance.getInitialMessage();
+  if (notification!.data['message'].length > 0) {
+    showMyDialog(notification.data[
+        'message']); //exibe essa mensagem quado o usuário clica na notifacação
+  }
 }
 
 void setPushToken(String? token) async {
@@ -87,7 +106,7 @@ void setPushToken(String? token) async {
 
   if (prefsToken != token || (prefsToken == token && prefSent == false)) {
     if (kDebugMode) {
-      print('Salvando Toke.');
+      print('Salvando Token.');
     }
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     String? brand;
@@ -119,6 +138,32 @@ void setPushToken(String? token) async {
   }
 }
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  if (kDebugMode) {
+    print('Mensagem recebida em background: ${message.notification}');
+  }
+}
+
+//Tela de mensagem
+void showMyDialog(String message) {
+  Widget okButton = OutlinedButton(
+    onPressed: () => Navigator.pop(navigatorKey.currentContext!),
+    child: const Text('Ok!'),
+  );
+  AlertDialog alerta = AlertDialog(
+    title: const Text('Mensagem'),
+    content: Text(message),
+    actions: [
+      okButton,
+    ],
+  );
+  showDialog(
+      context: navigatorKey.currentContext!,
+      builder: (BuildContext context) {
+        return alerta;
+      });
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -138,6 +183,7 @@ class MyApp extends StatelessWidget {
         Locale('pt', 'BR'),
       ],
       home: const Navigation(),
+      navigatorKey: navigatorKey,
     );
   }
 }
