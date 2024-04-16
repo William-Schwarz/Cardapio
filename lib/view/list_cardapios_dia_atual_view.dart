@@ -111,7 +111,7 @@ class ListCardapiosDiaAtualState extends State<ListCardapiosDiaAtual> {
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 const Navigation(
-                                              selectedTabIndex: 2,
+                                              index: 2,
                                             ),
                                           ),
                                         );

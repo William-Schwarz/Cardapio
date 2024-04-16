@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cardapio/configs/routes/routes.dart';
 import 'package:cardapio/controller/device_controller.dart';
 import 'package:cardapio/model/devices_model.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -10,7 +11,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:cardapio/configs/theme/colors.dart';
-import 'package:cardapio/view/navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -90,7 +90,9 @@ void _startPushNotificationHandler(FirebaseMessaging messaging) async {
 
   //Terminated
   var notification = await FirebaseMessaging.instance.getInitialMessage();
-  if (notification!.data['message'].length > 0) {
+  if (notification != null &&
+      notification.data['message'] != null &&
+      notification.data['message'].length > 0) {
     showMyDialog(notification.data[
         'message']); //exibe essa mensagem quado o usuário clica na notifacação
   }
@@ -182,8 +184,9 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         Locale('pt', 'BR'),
       ],
-      home: const Navigation(),
-      navigatorKey: navigatorKey,
+      routes: Routes.list,
+      initialRoute: Routes.initial,
+      navigatorKey: Routes.navigatorKey,
     );
   }
 }

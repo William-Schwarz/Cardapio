@@ -7,9 +7,8 @@ import 'package:cardapio/view/login_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Navigation extends StatefulWidget {
-  final int selectedTabIndex;
-
-  const Navigation({Key? key, this.selectedTabIndex = 0}) : super(key: key);
+  final int index;
+  const Navigation({Key? key, this.index = 0}) : super(key: key);
 
   @override
   State<Navigation> createState() => _NavigationState();
@@ -30,7 +29,7 @@ class _NavigationState extends State<Navigation> {
   void initState() {
     super.initState();
     _getUser();
-    _indiceAtual = widget.selectedTabIndex;
+    _indiceAtual = widget.index;
   }
 
   Future<void> _getUser() async {
