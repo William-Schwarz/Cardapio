@@ -80,82 +80,89 @@ class _CardapioState extends State<Cardapio> {
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Center(
-              child: SizedBox(
-                width: kIsWeb ? 700 : null,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 10,
-                    right: 10,
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => FullScreenImage(
-                            imagePath: _imagemUrl!,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        if (_isLoading) const LinearProgressIndicator(),
-                        if (!_isLoading && _imagemUrl != null)
-                          RelativeSizeImage(imageURL: _imagemUrl!)
-                        else
-                          const Center(
-                            child: Text(
-                              'Nenhum cardápio disponível.',
-                              style: TextStyle(
-                                fontSize: 16,
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: kIsWeb ? 700 : null,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => FullScreenImage(
+                                imagePath: _imagemUrl!,
                               ),
                             ),
-                          ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 5,
-                            backgroundColor: CustomColors.secondaryColor,
-                            padding: const EdgeInsets.all(
-                              25.0,
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (!_listMenuController.isListOpen)
+                              const SizedBox(
+                                height: 16,
+                              ),
+                            if (_isLoading) const LinearProgressIndicator(),
+                            if (!_isLoading &&
+                                _imagemUrl != null &&
+                                !_listMenuController.isListOpen)
+                              RelativeSizeImage(imageURL: _imagemUrl!)
+                            else if (!_listMenuController.isListOpen)
+                              const Center(
+                                child: Text(
+                                  'Nenhum cardápio disponível.',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(
+                              height: 16,
                             ),
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(12.0),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                elevation: 5,
+                                backgroundColor: CustomColors.secondaryColor,
+                                padding: const EdgeInsets.all(
+                                  25.0,
+                                ),
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(12.0),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _listMenuController.toggleListVisibility();
+                                });
+                              },
+                              child: Text(
+                                _listMenuController.isListOpen
+                                    ? 'Fechar Cardápios Anteriores'
+                                    : 'Visualizar Cardápios Anteriores',
+                                style: const TextStyle(
+                                  color: CustomColors.fontPrimaryColor,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _listMenuController.toggleListVisibility();
-                            });
-                          },
-                          child: Text(
-                            _listMenuController.isListOpen
-                                ? 'Fechar Cardápios Anteriores'
-                                : 'Visualizar Cardápios Anteriores',
-                            style: const TextStyle(
-                              color: CustomColors.fontPrimaryColor,
-                              fontSize: 16,
+                            const SizedBox(
+                              height: 12,
                             ),
-                          ),
+                            if (_listMenuController.isListOpen)
+                              _listMenuController.build(context),
+                          ],
                         ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        if (_listMenuController.isListOpen)
-                          _listMenuController.build(context),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           ),

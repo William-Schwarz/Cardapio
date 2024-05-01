@@ -150,7 +150,7 @@ class LoginViewState extends State<LoginView> {
                 children: [
                   SizedBox(
                     height: 250,
-                    child: Image.asset('images/K1_logo_colorido.png'),
+                    child: Image.asset('images/sign_in.png'),
                   ),
                   const SizedBox(
                     height: 40,
