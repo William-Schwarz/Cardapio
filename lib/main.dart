@@ -7,6 +7,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +18,16 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
   await Firebase.initializeApp(
-    options: const FirebaseOptions(
-        apiKey: "AIzaSyBW0jWVb0d3V0IPPOB1ybd7Do83vj7ZLQo",
-        authDomain: "cardapio-24614.firebaseapp.com",
-        projectId: "cardapio-24614",
-        storageBucket: "cardapio-24614.appspot.com",
-        messagingSenderId: "144862329362",
-        appId: "1:144862329362:web:3bd560f8694390961db6cb"),
+    options: FirebaseOptions(
+      apiKey: dotenv.env['API_KEY']!,
+      authDomain: dotenv.env['AUTH_DOMAIN']!,
+      projectId: dotenv.env['PROJECT_ID']!,
+      storageBucket: dotenv.env['STORAGE_BUCKET']!,
+      messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
+      appId: dotenv.env['APP_ID']!,
+    ),
   );
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
